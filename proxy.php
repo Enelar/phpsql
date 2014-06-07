@@ -43,7 +43,10 @@ class proxy extends proxy_storage
     if (!$this->InTransaction())
       $this->connector->Rollback();
     else
+    {
       $this->connector->StepBack($id);
+      $this->connector->ForgetStep($id);
+    }
     return false;
   }
   
