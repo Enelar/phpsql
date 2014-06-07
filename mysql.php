@@ -16,8 +16,8 @@ class mysql extends \phpsql\connector_interface
 
     try
     {
-      $con = new PDO('mysql:'.(implode(';', $str), $user, $pass);
-    } catch (PDOException $e)
+      $con = new \PDO('mysql:'.(implode(';', $str)), $user, $pass);
+    } catch (\PDOException $e)
     {
       die($e->getMessage());
     }
@@ -31,7 +31,7 @@ class mysql extends \phpsql\connector_interface
     $stmt = $conn->prepare($q);
     $stmt->execute($p);
 
-    $ret = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $ret = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
     $stmt->closeCursor();
     unset($stmt);
@@ -71,7 +71,7 @@ class mysql extends \phpsql\connector_interface
 
   public function InTransaction()
   {
-    return !!$this->db->inTransaction()
+    return !!$this->db->inTransaction();
   }
 }
 
