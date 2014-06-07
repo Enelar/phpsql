@@ -1,4 +1,4 @@
-<?php
+<?php namespace phpsql\connectors
 
 include('interface.php');
 
@@ -70,3 +70,6 @@ class pgsql extends phpsql\connector_interface
     return $stat === PGSQL_TRANSACTION_ACTIVE || $stat === PGSQL_TRANSACTION_INTRANS || $stat === PGSQL_TRANSACTION_INERROR;
   }
 }
+
+include('phpsql.php');
+phpsql\phpsql::RegisterSchemeHandler("pgsql", phpsql\connectors\pgsql);
