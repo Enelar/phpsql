@@ -24,6 +24,8 @@ class phpsql
     if (!is_string($str))
       return $str;
 
+    $last_error_level = error_reporting(0);
+
     list($scheme, $other) = explode("://", $str);
     list($creditals, $other) = explode("@", $other);
     list($user, $pass) = explode(":", $creditals);
@@ -36,6 +38,8 @@ class phpsql
       list($k, $v) = explode(":", $pair);
       $res[$k] = $v;
     }
+
+    error_reporting($last_error_level);
 
     return
     [
@@ -53,20 +57,24 @@ class phpsql
 
   public static function RegisterSchemeHandler( $scheme, $classname )
   {
-    $ref = &$this->supported_schemes;
+    $ref = &self::$supported_schemes;
     if (!isset($ref[$scheme]))
       $ref[$scheme] = $classname;
   }
 
   private function GetConnector( $scheme, $a )
   {
-    $ref = &$this->supported_schemes;
+    $ref = &self::$supported_schemes;
     if (!isset($ref[$scheme]))
       die("Scheme {$scheme} not found");
     if (is_string($ref[$scheme]))
     {
       $classname = $ref[$scheme];
-      $ref[$scheme] = new $classname($a['user'], $a['pass'], $a['ip'], $a['port'], $a['db'], $a['params']);
+      $connector = new $classname();
+
+      include('proxy.php');
+      $ref[$scheme] = new phpsql\proxy($connector);
+      $ref[$scheme]->OpenConnection($a['user'], $a['pass'], $a['addr'], $a['port'], $a['db'], $a['params']);
     }
     return $ref[$scheme];
   }

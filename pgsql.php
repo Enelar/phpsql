@@ -1,8 +1,8 @@
-<?php namespace phpsql\connectors
+<?php namespace phpsql\connectors;
 
-include('interface.php');
+include_once('interface.php');
 
-class pgsql extends phpsql\connector_interface
+class pgsql extends \phpsql\connector_interface
 {
   private $db;
 
@@ -71,5 +71,5 @@ class pgsql extends phpsql\connector_interface
   }
 }
 
-include('phpsql.php');
-phpsql\phpsql::RegisterSchemeHandler("pgsql", phpsql\connectors\pgsql);
+include_once('phpsql.php');
+\phpsql::RegisterSchemeHandler("pgsql", "\phpsql\connectors\pgsql");

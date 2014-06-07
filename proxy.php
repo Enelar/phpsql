@@ -20,9 +20,22 @@ class proxy extends proxy_storage
     return $this->connector->OpenConnection($user, $pass, $ip, $port, $db, $options);
   }
 
-  public function Query( $query, $params )
+  public function Query( $query, $params = [], $one_row = false, $reindex_by = null )
   {
-    return $this->connector->Query($query, $params);
+    assert(is_array($params), "phpsql->Query params should be array");
+
+    $res = $this->connector->Query($query, $params);
+
+    $ret = [];
+    if (!is_null($reindex_by))
+      foreach ($res as $row)
+        $ret[$row[$reindex_by]] = $row[$reindex_by];
+    else
+      $ret = $res;
+
+    if (count($ret) == 1)
+      return $ret[0];
+    return $ret;
   }
 
   public function Begin()
@@ -64,7 +77,7 @@ class proxy extends proxy_storage
   {
     $cur_transaction = end($this->transactions);
     if ($cur_transaction != $id)
-      die "Could not exit from transaction {$id}, waiting to finish {$cur_transaction}";
+      die("Could not exit from transaction {$id}, waiting to finish {$cur_transaction}");
   }
 
   public function InTransaction()

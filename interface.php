@@ -5,9 +5,9 @@ function OverloadRequired()
   $trace = debug_backtrace();
   $caller = array_shift($trace);
 
-  $a = $caller['function']
+  $a = $caller['function'];
   $b = $caller['class'] ? $caller['class'] : "";
-  die "Overload `$b::$a` required";
+  die("Overload '{$b}::{$a}' required") ;
 }
 
 class connector_interface
