@@ -33,7 +33,7 @@ class proxy extends proxy_storage
     else
       $ret = $res;
 
-    if (count($ret) == 1)
+    if ($one_row && count($ret) == 1)
       return $ret[0];
     return $ret;
   }
