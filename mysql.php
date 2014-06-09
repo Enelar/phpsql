@@ -28,7 +28,7 @@ class mysql extends \phpsql\connector_interface
 
   public function Query( $q, $p )
   {
-    $stmt = $conn->prepare($q);
+    $stmt = $this->db->prepare($q);
     $stmt->execute($p);
 
     $ret = $stmt->fetchAll(\PDO::FETCH_ASSOC);
