@@ -26,7 +26,7 @@ class mysql extends \phpsql\connector_interface
     return true;
   }
 
-  public function Query( $q, $p )
+  public function Query( $q, $p = [] )
   {
     $stmt = $this->db->prepare($q);
     $stmt->execute($p);
@@ -72,6 +72,11 @@ class mysql extends \phpsql\connector_interface
   public function InTransaction()
   {
     return !!$this->db->inTransaction();
+  }
+  
+  public function RawConnection()
+  {
+    return $this->db;
   }
 }
 

@@ -93,6 +93,11 @@ class proxy extends proxy_storage
       return false;
     return $this->transactions[0] == $id;
   }
+  
+  public function RawConnection()
+  {
+    return $this->connector->RawConnection();
+  }
 }
 
 class transaction_object
