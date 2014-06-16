@@ -33,14 +33,14 @@ class proxy extends proxy_storage
     else
       $ret = $res;
 
-    if (count($ret) == 1)
+    if ($one_row && count($ret) == 1)
       return $ret[0];
     return $ret;
   }
 
   public function Begin()
   {
-    $id = $this->$next_transaction_id++;
+    $id = $this->next_transaction_id++;
     $this->transactions[] = $id;
     if (!$this->InTransaction())
       $this->connector->Begin();
@@ -53,23 +53,25 @@ class proxy extends proxy_storage
   public function Rollback( $id )
   {
     $this->DieInWrongTransactionExitOrder($id);
-    if (!$this->InTransaction())
+    if ($this->IsHeadTransaction($id))
       $this->connector->Rollback();
     else
     {
       $this->connector->StepBack($id);
       $this->connector->ForgetStep($id);
     }
+    array_pop($this->transactions);
     return false;
   }
   
   public function Commit( $id )
   {
     $this->DieInWrongTransactionExitOrder($id);
-    if (!$this->InTransaction())
+    if ($this->IsHeadTransaction($id))
       $this->connector->Commit();
     else
       $this->connector->ForgetStep($id);
+    array_pop($this->transactions);
     return true;
   }
   
@@ -83,6 +85,13 @@ class proxy extends proxy_storage
   public function InTransaction()
   {
     return $this->connector->InTransaction();
+  }
+  
+  private function IsHeadTransaction( $id )
+  {
+    if (!count($this->transactions))
+      return false;
+    return $this->transactions[0] == $id;
   }
 }
 
@@ -99,12 +108,12 @@ class transaction_object
   
   public function Commit()
   {
-    return $this->proxy->Commit($id);
+    return $this->proxy->Commit($this->id);
   }
   
   public function Rollback()
   {
-    return $this->proxy->Rollback($id);
+    return $this->proxy->Rollback($this->id);
   }
   
   public function Finish( $status )
