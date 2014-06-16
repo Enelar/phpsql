@@ -69,6 +69,11 @@ class pgsql extends \phpsql\connector_interface
     $stat = pg_transaction_status($this->db);
     return $stat === PGSQL_TRANSACTION_ACTIVE || $stat === PGSQL_TRANSACTION_INTRANS || $stat === PGSQL_TRANSACTION_INERROR;
   }
+  
+  public function RawConnection()
+  {
+    return $this->db;
+  }
 }
 
 include_once('phpsql.php');

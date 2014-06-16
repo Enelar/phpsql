@@ -65,4 +65,10 @@ class connector_interface
     // Request database, is current connection in transaction state
     OverloadRequired();
   }
+
+  public function RawConnection()
+  {
+    // Return raw connection object
+    OverloadRequired();
+  }
 }
