@@ -56,7 +56,7 @@ class mysql extends \phpsql\connector_interface
   
   public function ForgetStep( $name )
   {
-    $this->Query("RELEASE SAVEPOINT {$this->name};");
+    $this->Query("RELEASE SAVEPOINT {$name};");
   }
   
   public function Rollback()
