@@ -41,32 +41,35 @@ class mysql extends \phpsql\connector_interface
 
   public function Begin()
   {
-    $this->Query("BEGIN;");
+    $this->Query("--BEGIN;");
+    $this->db->beginTransaction();
   }
 
   public function SaveStep( $name )
   {
-    $this->Query("SAVEPOINT {$name};");
+    $this->Query("SAVEPOINT nested_transaction_{$name};");
   }
   
   public function StepBack( $name )
   {
-    $this->Query("ROLLBACK TO SAVEPOINT {$name};");
+    $this->Query("ROLLBACK TO SAVEPOINT nested_transaction_{$name};");
   }
   
   public function ForgetStep( $name )
   {
-    $this->Query("RELEASE SAVEPOINT {$name};");
+    $this->Query("RELEASE SAVEPOINT nested_transaction_{$name};");
   }
   
   public function Rollback()
   {
-    $this->Query("ROLLBACK;");
+    $this->Query("--ROLLBACK;");
+    $this->db->rollBack();
   }
   
   public function Commit()
   {
-    $this->Query("COMMIT;");
+    $this->Query("--COMMIT;");
+    $this->db->commit();
   }
 
   public function InTransaction()
