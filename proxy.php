@@ -98,6 +98,40 @@ class proxy extends proxy_storage
   {
     return $this->connector->RawConnection();
   }
+
+  // Dig into transaction if required
+  public function ConditionalQuery( $check, $then, $else )
+  {
+    if ($check())
+      return $then();
+
+    $tran = $this->Begin();
+
+    if ($check()) // Appeared while we getting lock
+      return $tran->Rollback();
+    
+    $ret = $else();
+    
+    $tran->Commit();
+    return $ret;
+
+    // Execution example:
+    $this->ConditionalQuery
+    (
+      function()
+      {
+        return db::Query("SELECT count(*) FROM table WHERE id=1")['count'];
+      },
+      function ()
+      {
+        return db::Query("UPDATE table SET acc=acc+1 WHERE id=1");
+      },
+      function ()
+      {
+        return db::Query("INSERT INTO table(id) VALUES (1)");
+      }
+    );
+  }
 }
 
 class transaction_object
