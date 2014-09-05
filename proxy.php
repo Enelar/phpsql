@@ -40,7 +40,7 @@ class proxy extends proxy_storage
 
   public function Begin()
   {
-    $id = $this->$next_transaction_id++;
+    $id = $this->next_transaction_id++;
     $this->transactions[] = $id;
     if (!$this->InTransaction())
       $this->connector->Begin();
@@ -53,23 +53,25 @@ class proxy extends proxy_storage
   public function Rollback( $id )
   {
     $this->DieInWrongTransactionExitOrder($id);
-    if (!$this->InTransaction())
+    if ($this->IsHeadTransaction($id))
       $this->connector->Rollback();
     else
     {
       $this->connector->StepBack($id);
       $this->connector->ForgetStep($id);
     }
+    array_pop($this->transactions);
     return false;
   }
   
   public function Commit( $id )
   {
     $this->DieInWrongTransactionExitOrder($id);
-    if (!$this->InTransaction())
+    if ($this->IsHeadTransaction($id))
       $this->connector->Commit();
     else
       $this->connector->ForgetStep($id);
+    array_pop($this->transactions);
     return true;
   }
   
@@ -83,6 +85,52 @@ class proxy extends proxy_storage
   public function InTransaction()
   {
     return $this->connector->InTransaction();
+  }
+  
+  private function IsHeadTransaction( $id )
+  {
+    if (!count($this->transactions))
+      return false;
+    return $this->transactions[0] == $id;
+  }
+  
+  public function RawConnection()
+  {
+    return $this->connector->RawConnection();
+  }
+
+  // Dig into transaction if required
+  public function ConditionalQuery( $check, $then, $else )
+  {
+    if ($check())
+      return $then();
+
+    $tran = $this->Begin();
+
+    if ($check()) // Appeared while we getting lock
+      return $tran->Rollback();
+    
+    $ret = $else();
+    
+    $tran->Commit();
+    return $ret;
+
+    // Execution example:
+    $this->ConditionalQuery
+    (
+      function()
+      {
+        return db::Query("SELECT count(*) FROM table WHERE id=1")['count'];
+      },
+      function ()
+      {
+        return db::Query("UPDATE table SET acc=acc+1 WHERE id=1");
+      },
+      function ()
+      {
+        return db::Query("INSERT INTO table(id) VALUES (1)");
+      }
+    );
   }
 }
 
@@ -99,12 +147,12 @@ class transaction_object
   
   public function Commit()
   {
-    return $this->proxy->Commit($id);
+    return $this->proxy->Commit($this->id);
   }
   
   public function Rollback()
   {
-    return $this->proxy->Rollback($id);
+    return $this->proxy->Rollback($this->id);
   }
   
   public function Finish( $status )

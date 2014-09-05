@@ -19,7 +19,7 @@ class pgsql extends \phpsql\connector_interface
     return !!$this->db;
   }
 
-  public function Query( $q, $p )
+  public function Query( $q, $p = [] )
   {
     $res = pg_query_params($this->db, $q, $p);
 
@@ -41,17 +41,17 @@ class pgsql extends \phpsql\connector_interface
 
   public function SaveStep( $name )
   {
-    $this->Query("SAVEPOINT {$name};");
+    $this->Query("SAVEPOINT nested_transaction_{$name};");
   }
   
   public function StepBack( $name )
   {
-    $this->Query("ROLLBACK TO SAVEPOINT {$name};");
+    $this->Query("ROLLBACK TO SAVEPOINT nested_transaction_{$name};");
   }
   
   public function ForgetStep( $name )
   {
-    $this->Query("RELEASE SAVEPOINT {$this->name};");
+    $this->Query("RELEASE SAVEPOINT nested_transaction_{$name};");
   }
   
   public function Rollback()
@@ -68,6 +68,11 @@ class pgsql extends \phpsql\connector_interface
   {
     $stat = pg_transaction_status($this->db);
     return $stat === PGSQL_TRANSACTION_ACTIVE || $stat === PGSQL_TRANSACTION_INTRANS || $stat === PGSQL_TRANSACTION_INERROR;
+  }
+  
+  public function RawConnection()
+  {
+    return $this->db;
   }
 }
 

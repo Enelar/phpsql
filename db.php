@@ -7,7 +7,7 @@ class db
     return call_user_func_array(array(self::$db, $name), $args);
   }
 
-  private static $db;
+  public static $db;
 
   public static function Bind( $obj )
   {
