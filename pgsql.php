@@ -23,7 +23,7 @@ class pgsql extends \phpsql\connector_interface
   {
     foreach ($p as &$param)
       if (is_array($param))
-        $param = pgArrayFromPhp($param, null);
+        $param = array_php2pg($param, null);
 
     $res = pg_query_params($this->db, $q, $p);
 
@@ -33,7 +33,7 @@ class pgsql extends \phpsql\connector_interface
     $ret = [];
 
     while (($row = pg_fetch_assoc($res)) != false)
-      $ret[] = $row;
+      $ret[] = array_recursive_extract($row);
 
     return $ret;
   }
@@ -83,8 +83,48 @@ class pgsql extends \phpsql\connector_interface
 include_once('phpsql.php');
 \phpsql::RegisterSchemeHandler("pgsql", "\phpsql\connectors\pgsql");
 
+function array_recursive_extract($obj)
+{
+  $ret = [];
+  foreach ($obj as $key => $row)
+  {
+    if (is_array($row))
+      $ret[$key] = array_recursive_extract($row);
+    else if ($row[0] == '{') // expect postgresql array
+      $ret[$key] = array_pg2php($row);
+    else
+      $ret[$key] = $row;
+  }
+
+  return $ret;
+}
+
+function array_pg2php($text)
+{
+  if(is_null($text))
+    return [];
+  if(!is_string($text) && $text == '{}')
+    return [];
+ 
+  $text = substr($text, 1, -1); // Removes starting "{" and ending "}"
+  if(substr($text, 0, 1) == '"')
+    $text = substr($text, 1);
+ 
+  if(substr($text, -1, 1) == '"')
+    $text = substr($text, 0, -1);
+ 
+  $values = explode(',', $text);    
+ 
+  $fixed_values = [];
+ 
+  foreach ($values as $value)
+    $fixed_values[] = str_replace(["'", "\""], '', $value);
+ 
+  return $fixed_values;
+}
+
 // http://www.youlikeprogramming.com/2013/01/interfacing-postgresqls-hstore-with-php/ 
-function pgArrayFromPhp($array, $data_type = 'character varying')
+function array_php2pg($array, $data_type = 'character varying')
 {
   $array = (array) $array; // Type cast to array.
   $result = [];
@@ -93,7 +133,7 @@ function pgArrayFromPhp($array, $data_type = 'character varying')
   { // Iterate through array.
     if (is_array($entry)) // Supports nested arrays.
     {
-      $result[] = pgArrayFromPhp($entry, $data_type);
+      $result[] = array_php2pg($entry, $data_type);
       continue;
     }
     
