@@ -90,7 +90,7 @@ function array_recursive_extract($obj)
   {
     if (is_array($row))
       $ret[$key] = array_recursive_extract($row);
-    else if ($row[0] == '{') // expect postgresql array
+    else if (isset($row[0]) && $row[0] == '{') // expect postgresql array
       $ret[$key] = array_pg2php($row);
     else
       $ret[$key] = $row;
