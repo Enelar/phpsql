@@ -27,7 +27,7 @@ class wrapper
   }
 }
 
-class row_wraper implements \arrayaccess, \JsonSerializable, \iterator
+class row_wraper implements \arrayaccess, \JsonSerializable, \iterator, \Countable
 {
   private $original_row_array;
   
@@ -38,6 +38,11 @@ class row_wraper implements \arrayaccess, \JsonSerializable, \iterator
   }
 
   public function __invoke()
+  {
+    return $this->count();
+  }
+
+  public function count()
   {
     return count($this->original_row_array);
   }
