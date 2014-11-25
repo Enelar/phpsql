@@ -65,9 +65,7 @@ class row_wraper implements \arrayaccess, \JsonSerializable, \iterator
       return null;
 
     $o = &$this->original_row_array;
-    if (!is_array($o[$name]))
-      return $o[$name];
-    return new row_wraper($o[$name]);
+    return $this->RemainWrapper($o[$name]);
   }
   
   public function offsetSet($name, $value)
@@ -96,21 +94,28 @@ class row_wraper implements \arrayaccess, \JsonSerializable, \iterator
 
   public function current()
   {
-      return current($this->original_row_array);
+      return $this->RemainWrapper(current($this->original_row_array));
   }
 
   public function key()
   {
-      return key($this->original_row_array);
+      return $this->RemainWrapper(key($this->original_row_array));
   }
 
   public function next()
   {
-      return next($this->original_row_array);
+      return $this->RemainWrapper(next($this->original_row_array));
   }
 
   public function valid()
   {
       return false !== $this->current();
+  }
+
+  private function RemainWrapper(&$data)
+  {
+      if (!is_array($data))
+        return $data;
+      return new row_wraper($data);
   }
 }
