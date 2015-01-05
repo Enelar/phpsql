@@ -99,17 +99,20 @@ class row_wraper implements \arrayaccess, \JsonSerializable, \iterator, \Countab
 
   public function current()
   {
-      return $this->RemainWrapper(current($this->original_row_array));
+      $temp_variable_for_reference = current($this->original_row_array);
+      return $this->RemainWrapper($temp_variable_for_reference);
   }
 
   public function key()
   {
-      return $this->RemainWrapper(key($this->original_row_array));
+      $temp_variable_for_reference = key($this->original_row_array);
+      return $this->RemainWrapper($temp_variable_for_reference);
   }
 
   public function next()
   {
-      return $this->RemainWrapper(next($this->original_row_array));
+      $temp_variable_for_reference = next($this->original_row_array);
+      return $this->RemainWrapper($temp_variable_for_reference);
   }
 
   public function valid()
