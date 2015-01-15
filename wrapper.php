@@ -58,6 +58,16 @@ class row_wraper implements \arrayaccess, \JsonSerializable, \iterator, \Countab
     return $this->offsetGet($name);
   }
 
+  public function __isset ( $name )
+  {
+    return $this->offsetExists($name);
+  }
+
+  public function __unset ( $name )
+  {
+    return $this->offsetUnset($name);
+  }
+
   public function offsetExists ( $name )
   {
     $o = &$this->original_row_array;
