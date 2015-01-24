@@ -33,7 +33,8 @@ class row_wraper implements \arrayaccess, \JsonSerializable, \iterator, \Countab
   
   public function __construct(&$row)
   {
-    phoxy_protected_assert(is_array($row), "Row wrapper support only arrays");
+    if (is_array($row))
+      throw new \Exception("Row wrapper support only arrays");
     $this->original_row_array = $row;
   }
 
