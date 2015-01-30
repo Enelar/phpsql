@@ -33,7 +33,7 @@ class row_wraper implements \arrayaccess, \JsonSerializable, \iterator, \Countab
   
   public function __construct(&$row)
   {
-    if (is_array($row))
+    if (!is_array($row))
       throw new \Exception("Row wrapper support only arrays");
     $this->original_row_array = $row;
   }
