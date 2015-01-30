@@ -29,7 +29,7 @@ class wrapper
 
 class row_wraper implements \arrayaccess, \JsonSerializable, \iterator, \Countable
 {
-  private $original_row_array;
+  public $original_row_array;
   
   public function __construct(&$row)
   {
