@@ -30,6 +30,9 @@ class pgsql extends \phpsql\connector_interface
     if (is_string($res))
       assert(false, $res);
 
+    if ($res === false)
+      return pg_last_error();
+
     $ret = [];
 
     while (($row = pg_fetch_assoc($res)) != false)
