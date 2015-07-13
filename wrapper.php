@@ -18,6 +18,9 @@ class wrapper
   {
     $res = $this->obj->Query($query, $params, $one_row, $reindex_by);
 
+    if (is_string($res))
+      return $res;
+
     $row_array_to_obj = function($row)
     {
       return new row_wraper($row);
