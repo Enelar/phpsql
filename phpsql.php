@@ -2,6 +2,7 @@
 
 class phpsql
 {
+  public $con_params;
   public function Connect( $connection, $params = NULL )
   {
     /* $connection
@@ -14,8 +15,8 @@ class phpsql
      *   ['key1' => 'value1', 'key2' => 'value2']
      */
 
-    $con_params = $this->SplitConnectionString($connection);
-    $connector = $this->GetConnector($con_params['scheme'], $con_params);
+    $this->con_params = $this->SplitConnectionString($connection);
+    $connector = $this->GetConnector($this->con_params['scheme'], $this->con_params);
     return $connector;
   }
   
@@ -43,6 +44,7 @@ class phpsql
 
     return
     [
+      'origin' => $str,
       'scheme' => $scheme,
       'user' => $user,
       'pass' => $pass,
