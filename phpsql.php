@@ -69,15 +69,17 @@ class phpsql
     $ref = &self::$supported_schemes;
     if (!isset($ref[$scheme]))
       die("Scheme {$scheme} not found");
-    if (is_string($ref[$scheme]))
-    {
-      $classname = $ref[$scheme];
-      $connector = new $classname();
+    if (!is_string($ref[$scheme]))
+      die("Scheme {$scheme} invalid");
 
-      include('proxy.php');
-      $ref[$scheme] = new phpsql\proxy($connector);
-      $ref[$scheme]->OpenConnection($a['user'], $a['pass'], $a['addr'], $a['port'], $a['db'], $a['params']);
-    }
-    return $ref[$scheme];
+    $classname = $ref[$scheme];
+    $connector = new $classname();
+
+    include_once('proxy.php');
+    $proxy = new phpsql\proxy($connector);
+
+    $proxy->OpenConnection($a['user'], $a['pass'], $a['addr'], $a['port'], $a['db'], $a['params']);
+
+    return $proxy;
   }
 }
