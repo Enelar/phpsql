@@ -1,6 +1,6 @@
 <?php namespace phpsql\utils;
 
-include("vendor/enelar/phpa2o/phpa2o.php");
+include("vendor/autoload.php");
 
 class wrapper
 {
@@ -33,5 +33,5 @@ class wrapper
 }
 
 
-if (!class_alias("phpa2o", "\\phpsql\\utils\\row_wrapper"))
+if (!class_alias("\phpa2o\phpa2o", "\\phpsql\\utils\\row_wrapper"))
   die("PHPA2O is required. Try run composer install?");
