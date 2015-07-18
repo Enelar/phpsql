@@ -1,0 +1,17 @@
+{
+    "name": "enelar/phpsql",
+    "description": "Emulate nested SQL transactions for PHP",
+    "type": "library",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Kirill Berezin",
+            "email": "enelar@exsul.net"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require":
+    {
+      "enelar/phpa2o": "~0.0.0"
+    }
+}
