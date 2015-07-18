@@ -13,7 +13,7 @@
   "minimum-stability": "dev",
   "require":
   {
-    "enelar/phpa2o": "~0.0.0"
+    "enelar/phpa2o": "~0.0"
   },
   "repositories":
   [
