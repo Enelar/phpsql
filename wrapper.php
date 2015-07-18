@@ -32,6 +32,6 @@ class wrapper
   }
 }
 
-
-if (!class_alias("\phpa2o\phpa2o", "\\phpsql\\utils\\row_wrapper"))
-  die("PHPA2O is required. Try run composer install?");
+class row_wraper extends \phpa2o\phpa2o
+{
+}
