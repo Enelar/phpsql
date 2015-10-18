@@ -38,6 +38,8 @@ class pgsql extends \phpsql\connector_interface
     while (($row = pg_fetch_assoc($res)) != false)
       $ret[] = array_recursive_extract($row);
 
+    pg_free_result($res);
+
     return $ret;
   }
 
