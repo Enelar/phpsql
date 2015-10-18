@@ -26,6 +26,9 @@ class proxy extends proxy_storage
 
     $res = $this->connector->Query($query, $params);
 
+    if (!is_array($res))
+      return $res;
+
     $ret = [];
     if (!is_null($reindex_by))
       foreach ($res as $row)

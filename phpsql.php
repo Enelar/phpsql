@@ -2,6 +2,7 @@
 
 class phpsql
 {
+  public $con_params;
   public function Connect( $connection, $params = NULL )
   {
     /* $connection
@@ -14,8 +15,8 @@ class phpsql
      *   ['key1' => 'value1', 'key2' => 'value2']
      */
 
-    $con_params = $this->SplitConnectionString($connection);
-    $connector = $this->GetConnector($con_params['scheme'], $con_params);
+    $this->con_params = $this->SplitConnectionString($connection);
+    $connector = $this->GetConnector($this->con_params['scheme'], $this->con_params);
     return $connector;
   }
   
@@ -43,6 +44,7 @@ class phpsql
 
     return
     [
+      'origin' => $str,
       'scheme' => $scheme,
       'user' => $user,
       'pass' => $pass,
@@ -67,15 +69,17 @@ class phpsql
     $ref = &self::$supported_schemes;
     if (!isset($ref[$scheme]))
       die("Scheme {$scheme} not found");
-    if (is_string($ref[$scheme]))
-    {
-      $classname = $ref[$scheme];
-      $connector = new $classname();
+    if (!is_string($ref[$scheme]))
+      die("Scheme {$scheme} invalid");
 
-      include('proxy.php');
-      $ref[$scheme] = new phpsql\proxy($connector);
-      $ref[$scheme]->OpenConnection($a['user'], $a['pass'], $a['addr'], $a['port'], $a['db'], $a['params']);
-    }
-    return $ref[$scheme];
+    $classname = $ref[$scheme];
+    $connector = new $classname();
+
+    include_once('proxy.php');
+    $proxy = new phpsql\proxy($connector);
+
+    $proxy->OpenConnection($a['user'], $a['pass'], $a['addr'], $a['port'], $a['db'], $a['params']);
+
+    return $proxy;
   }
 }
