@@ -30,6 +30,15 @@ class wrapper
 
     return $row_array_to_obj($res);
   }
+
+  public function SafeQuery($query, $params = [], $one_row = false, $reindex_by = null)
+  {
+    $res = $this->Query($query, $params, $one_row, $reindex_by);
+    if (is_string($res))
+      throw new \Exception($res);
+
+    return $res;
+  }
 }
 
 class row_wraper extends \phpa2o\phpa2o
