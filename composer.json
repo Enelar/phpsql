@@ -13,7 +13,7 @@
   "minimum-stability": "dev",
   "require":
   {
-    "enelar/phpa2o": "~0.0"
+    "enelar/phpa2o": "~0"
   },
   "repositories":
   [
@@ -21,5 +21,8 @@
       "type": "vcs",
       "url": "https://github.com/enelar/phpa2o"
     }
-  ]
+  ],
+  "autoload": {
+    "files": ["oneline.php"]
+  }
 }
