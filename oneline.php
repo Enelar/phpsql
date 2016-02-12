@@ -1,14 +1,14 @@
 <?php namespace phpsql;
 
-require('db.php');
+require_once('phpsqldb.php');
 
 function OneLineConfig($conf)
 {
-  require('phpsql.php');
-  require('wrapper.php');
+  require_once('phpsql.php');
+  require_once('wrapper.php');
 
   list($scheme) = explode(":", $conf);
-  require("{$scheme}.php");
+  require_once("{$scheme}.php");
 
   $phpsql = new \phpsql();
   $connection = $phpsql->Connect($conf);
