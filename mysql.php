@@ -39,6 +39,11 @@ class mysql extends \phpsql\connector_interface
     return $ret;
   }
 
+  public function lastInsertId()
+  {
+    return $this->db->lastInsertId();
+  }
+
   public function Begin()
   {
     $this->Query("--BEGIN;");
@@ -49,23 +54,23 @@ class mysql extends \phpsql\connector_interface
   {
     $this->Query("SAVEPOINT nested_transaction_{$name};");
   }
-  
+
   public function StepBack( $name )
   {
     $this->Query("ROLLBACK TO SAVEPOINT nested_transaction_{$name};");
   }
-  
+
   public function ForgetStep( $name )
   {
     $this->Query("RELEASE SAVEPOINT nested_transaction_{$name};");
   }
-  
+
   public function Rollback()
   {
     $this->Query("--ROLLBACK;");
     $this->db->rollBack();
   }
-  
+
   public function Commit()
   {
     $this->Query("--COMMIT;");
@@ -76,7 +81,7 @@ class mysql extends \phpsql\connector_interface
   {
     return !!$this->db->inTransaction();
   }
-  
+
   public function RawConnection()
   {
     return $this->db;

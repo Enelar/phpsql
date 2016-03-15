@@ -20,6 +20,12 @@ class proxy extends proxy_storage
     return $this->connector->OpenConnection($user, $pass, $ip, $port, $db, $options);
   }
 
+  public function lastInsertId()
+  {
+    $res = $this->connector->lastInsertId();
+    return $res;
+  }
+
   public function Query( $query, $params = [], $one_row = false, $reindex_by = null )
   {
     assert(is_array($params), "phpsql->Query params should be array");
@@ -66,7 +72,7 @@ class proxy extends proxy_storage
     array_pop($this->transactions);
     return false;
   }
-  
+
   public function Commit( $id )
   {
     $this->DieInWrongTransactionExitOrder($id);
@@ -77,7 +83,7 @@ class proxy extends proxy_storage
     array_pop($this->transactions);
     return true;
   }
-  
+
   private function DieInWrongTransactionExitOrder( $id )
   {
     $cur_transaction = end($this->transactions);
@@ -89,14 +95,14 @@ class proxy extends proxy_storage
   {
     return $this->connector->InTransaction();
   }
-  
+
   private function IsHeadTransaction( $id )
   {
     if (!count($this->transactions))
       return false;
     return $this->transactions[0] == $id;
   }
-  
+
   public function RawConnection()
   {
     return $this->connector->RawConnection();
@@ -112,9 +118,9 @@ class proxy extends proxy_storage
 
     if ($check()) // Appeared while we getting lock
       return $tran->Rollback();
-    
+
     $ret = $else();
-    
+
     $tran->Commit();
     return $ret;
 
@@ -141,23 +147,23 @@ class transaction_object
 {
   private $proxy;
   private $id;
-  
+
   public function __construct( $proxy, $id )
   {
     $this->proxy = $proxy;
     $this->id = $id;
   }
-  
+
   public function Commit()
   {
     return $this->proxy->Commit($this->id);
   }
-  
+
   public function Rollback()
   {
     return $this->proxy->Rollback($this->id);
   }
-  
+
   public function Finish( $status )
   {
     if ($status)
