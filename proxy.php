@@ -14,16 +14,24 @@ class proxy extends proxy_storage
 {
   private $transactions = [];
   private $next_transaction_id = 1;
+  private $last_insert_id = "NOT_AN_ID";
 
   public function OpenConnection( $user, $pass, $ip, $port, $db, $options )
   {
     return $this->connector->OpenConnection($user, $pass, $ip, $port, $db, $options);
   }
 
-  public function lastInsertId()
+  public function AffectedID()
   {
-    $res = $this->connector->lastInsertId();
-    return $res;
+    $affected_id = $this->connector->affected_id;
+
+    if ($affected_id === null)
+      throw new \Exception("Unable to determine affected ID. This DB support it?");
+
+    if ($affected_id === false)
+      throw new \Exception("Unable to determine affected ID. Maybe you update multiply rows?");
+
+    return $affected_id;
   }
 
   public function Query( $query, $params = [], $one_row = false, $reindex_by = null )

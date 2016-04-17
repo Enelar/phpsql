@@ -33,15 +33,17 @@ class mysql extends \phpsql\connector_interface
 
     $ret = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
+    // If we affect only one row, we could determine affected id
+    $affected_rows = $stmt->rowCount();
+    if ($affected_rows == 1)
+      $this->affected_id = $this->db->lastInsertId();
+    else
+      $this->affected_id = false;
+
     $stmt->closeCursor();
     unset($stmt);
 
     return $ret;
-  }
-
-  public function lastInsertId()
-  {
-    return $this->db->lastInsertId();
   }
 
   public function Begin()
