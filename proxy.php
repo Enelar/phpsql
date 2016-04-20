@@ -29,7 +29,7 @@ class proxy extends proxy_storage
       throw new \Exception("Unable to determine affected ID. This DB support it?");
 
     if ($affected_id === false)
-      throw new \Exception("Unable to determine affected ID. Maybe you update multiply rows?");
+      throw new \Exception("Unable to determine affected ID. Maybe you updating multiply rows?");
 
     return $affected_id;
   }

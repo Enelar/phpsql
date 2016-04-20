@@ -22,5 +22,7 @@ abstract class connector_interface
   abstract public function InTransaction();
   // Return raw connection object
   abstract public function RawConnection();
+  // Storing last affected id for drivers that supports it
+  public $affected_id = null;
 }
 

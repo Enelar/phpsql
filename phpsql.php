@@ -82,6 +82,4 @@ class phpsql
 
     return $proxy;
   }
-
-  public $affected_id = null;
 }

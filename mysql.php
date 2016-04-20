@@ -35,7 +35,7 @@ class mysql extends \phpsql\connector_interface
 
     // If we affect only one row, we could determine affected id
     $affected_rows = $stmt->rowCount();
-    if ($affected_rows == 1)
+    if ($affected_rows == 1 && strpos(strtolower($q), "select") == false)
       $this->affected_id = $this->db->lastInsertId();
     else
       $this->affected_id = false;
