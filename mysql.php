@@ -33,6 +33,13 @@ class mysql extends \phpsql\connector_interface
 
     $ret = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
+    // If we affect only one row, we could determine affected id
+    $affected_rows = $stmt->rowCount();
+    if ($affected_rows == 1 && strpos(strtolower($q), "select") == false)
+      $this->affected_id = $this->db->lastInsertId();
+    else
+      $this->affected_id = false;
+
     $stmt->closeCursor();
     unset($stmt);
 
@@ -49,23 +56,23 @@ class mysql extends \phpsql\connector_interface
   {
     $this->Query("SAVEPOINT nested_transaction_{$name};");
   }
-  
+
   public function StepBack( $name )
   {
     $this->Query("ROLLBACK TO SAVEPOINT nested_transaction_{$name};");
   }
-  
+
   public function ForgetStep( $name )
   {
     $this->Query("RELEASE SAVEPOINT nested_transaction_{$name};");
   }
-  
+
   public function Rollback()
   {
     $this->Query("--ROLLBACK;");
     $this->db->rollBack();
   }
-  
+
   public function Commit()
   {
     $this->Query("--COMMIT;");
@@ -76,7 +83,7 @@ class mysql extends \phpsql\connector_interface
   {
     return !!$this->db->inTransaction();
   }
-  
+
   public function RawConnection()
   {
     return $this->db;

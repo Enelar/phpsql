@@ -19,7 +19,7 @@ class phpsql
     $connector = $this->GetConnector($this->con_params['scheme'], $this->con_params);
     return $connector;
   }
-  
+
   private function SplitConnectionString( $str )
   {
     if (!is_string($str))
