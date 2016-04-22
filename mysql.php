@@ -48,7 +48,7 @@ class mysql extends \phpsql\connector_interface
 
   public function Begin()
   {
-    $this->Query("--BEGIN;");
+    $this->Query("-- BEGIN;");
     $this->db->beginTransaction();
   }
 
@@ -69,13 +69,13 @@ class mysql extends \phpsql\connector_interface
 
   public function Rollback()
   {
-    $this->Query("--ROLLBACK;");
+    $this->Query("-- ROLLBACK;");
     $this->db->rollBack();
   }
 
   public function Commit()
   {
-    $this->Query("--COMMIT;");
+    $this->Query("-- COMMIT;");
     $this->db->commit();
   }
 
