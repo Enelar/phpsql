@@ -28,6 +28,8 @@ class mysql extends \phpsql\connector_interface
 
   public function Query( $q, $p = [] )
   {
+    $this->UnifyParamsConvention($q, $p);
+
     $stmt = $this->db->prepare($q);
     $stmt->execute($p);
 
@@ -91,6 +93,32 @@ class mysql extends \phpsql\connector_interface
   public function RawConnection()
   {
     return $this->db;
+  }
+
+  private function UnifyParamsConvention(&$q, &$p)
+  {
+    $first_english_letter = ord('a');
+
+    $new_q = $q;
+    $new_p = [];
+
+    $total_replaced = 0;
+    for ($i = 0; $i < count($p); $i++)
+    {
+      $cur_numb = 1 + $i;
+      $cur_letter = chr($first_english_letter + $i);
+      $ancor = ":".$cur_letter;
+
+      $new_q = str_replace('$'.$cur_numb, $ancor, $new_q, $replaced);
+      $total_replaced += $replaced;
+      $new_p[$ancor] = $p[$i];
+    }
+
+    if ($replaced != count($p))
+      return;
+
+    $q = $new_q;
+    $p = $new_p;
   }
 }
 
