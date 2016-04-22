@@ -31,6 +31,10 @@ class mysql extends \phpsql\connector_interface
     $stmt = $this->db->prepare($q);
     $stmt->execute($p);
 
+    $issue = $stmt->errorinfo();
+    assert(is_null($issue[2]), $issue[2]);
+
+
     $ret = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
     // If we affect only one row, we could determine affected id

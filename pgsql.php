@@ -27,8 +27,7 @@ class pgsql extends \phpsql\connector_interface
 
     $res = pg_query_params($this->db, $q, $p);
 
-    if (is_string($res))
-      assert(false, $res);
+    assert(!is_string($res), $res);
 
     if ($res === false)
       return pg_last_error();
@@ -134,7 +133,7 @@ function array_pg2php($text)
   return $fixed_values;
 }
 
-// http://www.youlikeprogramming.com/2013/01/interfacing-postgresqls-hstore-with-php/ 
+// http://www.youlikeprogramming.com/2013/01/interfacing-postgresqls-hstore-with-php/
 function array_php2pg($array, $data_type = 'character varying')
 {
   $array = (array) $array; // Type cast to array.
