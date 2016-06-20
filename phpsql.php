@@ -29,6 +29,12 @@ class phpsql
 
     list($scheme, $other) = explode("://", $str);
     list($creditals, $other) = explode("@", $other);
+    if (is_null($other))
+    {
+      $other = $creditals;
+      $creditals = "";
+    };
+
     list($user, $pass) = explode(":", $creditals);
     list($address, $database, $params) = explode("/", $other);
     list($ip, $port) = explode(":", $address);
