@@ -15,71 +15,62 @@ class mongodb extends \phpsql\connector_interface
     if ($ip) $str .= "{$ip}";
     if ($port) $str .= ":{$port}";
 
-    $this->db = new \MongoClient($str);
+    if (!$db)
+      throw new \Exception("MongoDB database should be specified");
 
-    if ($db)
-      $this->db = $this->db->$db;
+    $con = new \MongoClient($str);
+
+    if ($con && $db)
+      $this->db = $con->selectDB($db);
 
     return !!$this->db;
   }
 
   public function Query( $q, $p = [] )
   {
-    foreach ($p as &$param)
-      if (is_array($param))
-        $param = array_php2pg($param, null);
-
-    $res = pg_query_params($this->db, $q, $p);
-
-    assert(!is_string($res), $res);
-
-    if ($res === false)
-      return pg_last_error();
+    $table = new \MongoCollection($this->db, $q);
+    $res = $table->find($p);
 
     $ret = [];
-
-    while (($row = pg_fetch_assoc($res)) != false)
-      $ret[] = array_recursive_extract($row);
-
-    pg_free_result($res);
+    foreach ($res as $row)
+      $ret[] = $row;
 
     return $ret;
   }
 
   public function Begin()
   {
-    $this->Query("BEGIN;");
+    throw new \Exception("Unimplemented");
   }
 
   public function SaveStep( $name )
   {
-    $this->Query("SAVEPOINT nested_transaction_{$name};");
+    throw new \Exception("Unimplemented");
   }
 
   public function StepBack( $name )
   {
-    $this->Query("ROLLBACK TO SAVEPOINT nested_transaction_{$name};");
+    throw new \Exception("Unimplemented");
   }
 
   public function ForgetStep( $name )
   {
-    $this->Query("RELEASE SAVEPOINT nested_transaction_{$name};");
+    throw new \Exception("Unimplemented");
   }
 
   public function Rollback()
   {
-    $this->Query("ROLLBACK;");
+    throw new \Exception("Unimplemented");
   }
 
   public function Commit()
   {
-    $this->Query("COMMIT;");
+    throw new \Exception("Unimplemented");
   }
 
   public function InTransaction()
   {
-    $stat = pg_transaction_status($this->db);
-    return $stat === PGSQL_TRANSACTION_ACTIVE || $stat === PGSQL_TRANSACTION_INTRANS || $stat === PGSQL_TRANSACTION_INERROR;
+    throw new \Exception("Unimplemented");
   }
 
   public function RawConnection()
