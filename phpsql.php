@@ -1,4 +1,4 @@
-<?php
+<?php namespace phpsql;
 
 class phpsql
 {

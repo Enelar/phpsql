@@ -1,4 +1,5 @@
-<?php
+<?php namespace phpsql;
+
 // Compatibility with https://github.com/Enelar/pgsql_php
 class db
 {
