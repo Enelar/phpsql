@@ -123,4 +123,4 @@ class mysql extends \phpsql\connector_interface
 }
 
 include_once('phpsql.php');
-\phpsql::RegisterSchemeHandler("mysql", "\phpsql\connectors\mysql");
+\phpsql\phpsql::RegisterSchemeHandler("mysql", "\phpsql\connectors\mysql");

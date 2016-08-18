@@ -76,7 +76,7 @@ class phpsql
     $connector = new $classname();
 
     include_once('proxy.php');
-    $proxy = new phpsql\proxy($connector);
+    $proxy = new \phpsql\proxy($connector);
 
     $proxy->OpenConnection($a['user'], $a['pass'], $a['addr'], $a['port'], $a['db'], $a['params']);
 

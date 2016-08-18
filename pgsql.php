@@ -85,7 +85,7 @@ class pgsql extends \phpsql\connector_interface
 }
 
 include_once('phpsql.php');
-\phpsql::RegisterSchemeHandler("pgsql", "\phpsql\connectors\pgsql");
+\phpsql\phpsql::RegisterSchemeHandler("pgsql", "\phpsql\connectors\pgsql");
 
 function array_recursive_extract($obj)
 {
