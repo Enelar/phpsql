@@ -94,7 +94,7 @@ function array_recursive_extract($obj)
   {
     if (is_array($row))
       $ret[$key] = array_recursive_extract($row);
-    else if (isset($row[0]) && $row[0] == '{') // expect postgresql array
+    else if (isset($row[0]) && in_array($row[0], ['{', '['])) // expect postgresql array
     {
       $json = json_decode($row, true);
       if (!is_null($json))
