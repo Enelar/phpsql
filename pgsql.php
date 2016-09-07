@@ -27,7 +27,7 @@ class pgsql extends \phpsql\connector_interface
 
     $res = pg_query_params($this->db, $q, $p);
 
-    assert(!is_string($res), $res);
+    assert(!is_string($res), (string)$res);
 
     if ($res === false)
       return pg_last_error();
