@@ -10,7 +10,7 @@ function OneLineConfig($conf)
   list($scheme) = explode(":", $conf);
   require_once(__DIR__."/{$scheme}.php");
 
-  $phpsql = new \phpsql();
+  $phpsql = new \phpsql\phpsql();
   $connection = $phpsql->Connect($conf);
   \db::Bind(new \phpsql\utils\wrapper($connection));
 }
