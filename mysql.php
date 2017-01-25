@@ -110,11 +110,11 @@ class mysql extends \phpsql\connector_interface
       $ancor = ":".$cur_letter;
 
       $new_q = str_replace('$'.$cur_numb, $ancor, $new_q, $replaced);
-      $total_replaced += $replaced;
+      $total_replaced += (int)(!!$replaced);
       $new_p[$ancor] = $p[$i];
     }
 
-    if ($replaced != count($p))
+    if ($total_replaced != count($p))
       return;
 
     $q = $new_q;
