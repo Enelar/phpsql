@@ -103,7 +103,12 @@ function array_recursive_extract($obj)
         $ret[$key] = array_pg2php($row);
     }
     else
-      $ret[$key] = $row;
+      if ($row == 't' || $row == 'f')
+        $ret[$key] = $row == 't';
+      else if (is_numeric($row))
+        $ret[$key] = $row + 0;
+      else
+        $ret[$key] = $row;
   }
 
   return $ret;
