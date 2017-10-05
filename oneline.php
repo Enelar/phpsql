@@ -12,5 +12,5 @@ function OneLineConfig($conf)
 
   $phpsql = new \phpsql\phpsql();
   $connection = $phpsql->Connect($conf);
-  \db::Bind(new \phpsql\utils\wrapper($connection));
+  db::Bind(new \phpsql\utils\wrapper($connection));
 }
