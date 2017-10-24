@@ -25,7 +25,7 @@ class wrapper
 
     $row_array_to_obj = function($row)
     {
-      return new row_wraper($row);
+      return new \phpa2o\phpa2o($row);
     };
 
     return $row_array_to_obj($res);
@@ -39,8 +39,4 @@ class wrapper
 
     return $res;
   }
-}
-
-class row_wraper extends \phpa2o\phpa2o
-{
 }

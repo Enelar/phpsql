@@ -38,6 +38,10 @@ class proxy extends proxy_storage
   {
     assert(is_array($params), "phpsql->Query params should be array");
 
+    foreach ($params as &$param)
+      if ($param instanceof \phpa2o\phpa2o)
+        $param = $param->__2array();
+
     $res = $this->connector->Query($query, $params);
 
     if (!is_array($res))
@@ -45,8 +49,14 @@ class proxy extends proxy_storage
 
     $ret = [];
     if (!is_null($reindex_by))
-      foreach ($res as $row)
-        $ret[$row[$reindex_by]] = $row[$reindex_by];
+    {
+      if (!$one_row)
+        foreach ($res as $row)
+          $ret[$row[$reindex_by]] = $row[$reindex_by];
+      else
+        foreach ($res as $row)
+          $ret[] = $row[$reindex_by];
+    }
     else
       $ret = $res;
 
