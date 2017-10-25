@@ -89,22 +89,23 @@ include_once('phpsql.php');
 
 function array_recursive_extract($obj)
 {
+  var_dump($obj);
   $ret = [];
 
-  error_log(json_encode($obj));
   foreach ($obj as $key => $row)
   {
     if (is_array($row))
       $ret[$key] = array_recursive_extract($row);
     else if (isset($row[0]) && in_array($row[0], ['{', '['])) // expect postgresql array
     {
-      var_dump($row, $json);
+      $json = json_decode($row);
       if (!is_null($json))
         $ret[$key] = $json;
       else
       {
         var_dump($row);
-        $ret[$key] = array_pg2php($row);
+        $arr = array_pg2php($row);
+        $ret[$key] = $arr;
         var_dump($arr);
       }
     }
@@ -152,20 +153,34 @@ var_dump("RILI", count($quotes));
     {
       if ($value == '"')
         continue;
-      if (substr($value, -1) != '"')
-        continue;
       if (substr($value, -2) == '\\"')
         continue;
-      // End of string
+      var_dump($value);
 
-      $value = implode(',', $quotes);
-      $quotes = [];
-
-      if ($brackets !== null)
+      // Simple string ending
+      if (substr($value, -1) == '"')
       {
-        $scope[] = $value;
+        $value = substr(implode(',', $quotes), 1, -1); // trim "
+        $quotes = [];
+
+        if ($brackets !== null)
+          $scope[] = $value;
+        else
+          $values[] = $value;
+        // Ignore any opcode in simple string
         continue;
       }
+      if (!preg_match('/^(.*[^\\\])\"(}+)$/', $value, $match))
+      {
+        // Just quote chunk
+        continue;
+      }
+
+
+      // End of string with } opcodes, continue execution
+      $value = implode(',', $quotes); // trim "
+      $quotes = [];
+      // value now "string"}}} format
     }
 
     if ($value[0] == '{')
@@ -188,16 +203,18 @@ var_dump("RILI", count($quotes));
           var_dump($values, $scope);
           if ($cut[0] == '"')
           {
-            echo "wat";
             var_dump($scope);
-            if (!preg_match('/^\"(.*)\"}*$/', $cut, $match))
+            $inline_quote = preg_match('/^\"(.*[^\\\])\"(}*)$/', $cut, $match);
+            var_dump($inline_quote);
+
+            if (!$inline_quote)
             {
               $quotes[] = $cut;
               echo "quotes";
               continue;
             }
             else
-              $scope[] = $cut;
+              $scope[] = $match[1] . $match[2];
             var_dump($scope, $match);
           }
           else
@@ -262,6 +279,7 @@ var_dump("RILI", count($quotes));
           if ($scope === $brackets)
           {
             echo "FOLDING";
+            var_dump($brackets);
             $values[] = $brackets;
             $scope = null;
             break;
@@ -324,8 +342,10 @@ var_dump("RILI", count($quotes));
     $values[] = $value;
   }
 
-  echo "RETURNING";
-  var_dump($values);
+  var_dump(["RETURNING", "values" => $values, "value" => $value, "brackets" => $brackets, "quotes" => $quotes, "scope" => $scope]);
+
+  if (!is_null($brackets))
+    $values[] = $brackets;
 
   if (is_string($values[0]))
     $return = $values[0];
