@@ -52,10 +52,12 @@ class proxy extends proxy_storage
     {
       if (!$one_row)
         foreach ($res as $row)
-          $ret[$row[$reindex_by]] = $row[$reindex_by];
+          $ret[$row[$reindex_by]] = $row;
       else
         foreach ($res as $row)
           $ret[] = $row[$reindex_by];
+
+      return $ret;
     }
     else
       $ret = $res;
@@ -81,25 +83,27 @@ class proxy extends proxy_storage
   {
     $this->DieInWrongTransactionExitOrder($id);
     if ($this->IsHeadTransaction($id))
-      $this->connector->Rollback();
+      $res = $this->connector->Rollback();
     else
     {
-      $this->connector->StepBack($id);
+      $res = $this->connector->StepBack($id);
       $this->connector->ForgetStep($id);
     }
     array_pop($this->transactions);
-    return false;
+
+    return is_null($res) ? false : $res;
   }
 
   public function Commit( $id )
   {
     $this->DieInWrongTransactionExitOrder($id);
     if ($this->IsHeadTransaction($id))
-      $this->connector->Commit();
+      $res = $this->connector->Commit();
     else
-      $this->connector->ForgetStep($id);
+      $res = $this->connector->ForgetStep($id);
     array_pop($this->transactions);
-    return true;
+
+    return is_null($res) ? true : $res;
   }
 
   private function DieInWrongTransactionExitOrder( $id )
