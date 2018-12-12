@@ -115,20 +115,15 @@ class pgsql extends \phpsql\connector_interface
 include_once('phpsql.php');
 \phpsql\phpsql::RegisterSchemeHandler("pgsql", "\phpsql\connectors\pgsql");
 
-$PG_ARRAY_OPENNERS = [ '['', ]; // may also be '{'
-
 function array_recursive_extract($obj)
 {
-  global $PG_ARRAY_OPENNERS;
   $ret = [];
 
   foreach ($obj as $key => $row)
   {
     if (is_array($row))
       $ret[$key] = array_recursive_extract($row);
-
-    else if (isset($row[0]) && in_array($row[0], $PG_ARRAY_OPENNERS)) // 
-expect postgresql array
+    else if (isset($row[0]) && in_array($row[0], ['{'])) // expect postgresql array
     {
       $json = json_decode($row, true);
       if (!is_null($json))
