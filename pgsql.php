@@ -49,16 +49,8 @@ class pgsql extends \phpsql\connector_interface
 
   public function SaveStep( $name )
   {
-    $transactions_statuses =
-    [
-      PGSQL_TRANSACTION_ACTIVE,
-      PGSQL_TRANSACTION_INTRANS,
-    ];
-
-    $status = in_array(pg_transaction_status($this->db), $transactions_statuses);
     $this->Query("SAVEPOINT nested_transaction_{$name};");
-
-    return $status;
+    return true;
   }
 
   public function StepBack( $name )
@@ -69,8 +61,15 @@ class pgsql extends \phpsql\connector_interface
 
   public function ForgetStep( $name )
   {
+    $transactions_statuses =
+    [
+      PGSQL_TRANSACTION_ACTIVE,
+      PGSQL_TRANSACTION_INTRANS,
+    ];
+
+    $status = in_array(pg_transaction_status($this->db), $transactions_statuses);
     $this->Query("RELEASE SAVEPOINT nested_transaction_{$name};");
-    return false;
+    return $status;
   }
 
   public function Rollback()
@@ -123,7 +122,7 @@ function array_recursive_extract($obj)
   {
     if (is_array($row))
       $ret[$key] = array_recursive_extract($row);
-    else if (isset($row[0]) && in_array($row[0], ['{'])) // expect postgresql array
+    else if (isset($row[0]) && in_array($row[0], ['{', '['])) // expect postgresql array
     {
       $json = json_decode($row, true);
       if (!is_null($json))
